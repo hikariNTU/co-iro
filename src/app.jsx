@@ -1,24 +1,32 @@
 import { Logo } from "./logo"
 import { useState } from "preact/hooks"
 
-const Header = () => (
-  <header>
-    <h1>Co-Iro</h1>
-    <span>
-      <a
-        class="link"
-        href="https://developer.mozilla.org/en-US/docs/Web/API/EyeDropper_API"
-        target="_blank"
-        rel="noopener noreferrer"
-      >
-        Eye Dropper API
-      </a>
-      showcase.
-    </span>
-  </header>
+const links = Object.freeze({
+  caniuse: "https://caniuse.com/mdn-api_eyedropper",
+  mdnLink: "https://developer.mozilla.org/en-US/docs/Web/API/EyeDropper_API",
+})
+
+const Link = ({ href, children }) => (
+  <a class="link" href={href} target="_blank" rel="noopener noreferrer">
+    {children}
+  </a>
 )
 
-const cLink = "https://caniuse.com/mdn-api_eyedropper"
+const Header = () => (
+  <header class="🎩">
+    <Logo className="🎩1" />
+    <h1 class="🎩2">Co-Iro</h1>
+    <div class="🎩3">
+      <p>
+        Retrieve color from your screen pixel with{" "}
+        <Link href={links.mdnLink}>Eye Dropper API</Link>
+      </p>
+      <p>
+        <Link href={links.caniuse}>Can I use it</Link>?
+      </p>
+    </div>
+  </header>
+)
 
 const GetEyeDropper = async () => {
   if (typeof window > "u" || !window.EyeDropper) {
@@ -58,7 +66,6 @@ const EyeDropper = () => {
 export function App(props) {
   return (
     <>
-      <Logo />
       <Header />
       <EyeDropper />
     </>

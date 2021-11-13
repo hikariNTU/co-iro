@@ -23,6 +23,13 @@ h1 {
   margin: 0.25rem;
 }
 
+h1,
+section,
+p,
+header {
+  margin: 0;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -55,11 +62,11 @@ h1 {
 
 .ed-btn {
   $primary: #e0e0e0;
-  border: none;
+  border: #ddd solid 2px;
   margin: 3rem;
   background-color: var(--gray);
   padding: 3rem;
-  border-radius: 1rem;
+  border-radius: 0;
   font-size: 2rem;
   font-weight: 100;
   letter-spacing: 0.2em;
@@ -85,6 +92,37 @@ h1 {
 
     &:active {
       box-shadow: 0 0 0 3px var(--pink);
+    }
+  }
+}
+
+.🎩 {
+  display: grid;
+  grid-template-areas:
+    "icon title"
+    "icon desc";
+  grid-template-columns: 256px 1fr;
+  grid-template-rows: 2fr 110px;
+  gap: 0 32px;
+  border: solid 2px #ddd;
+  padding: 32px;
+  &1 {
+    grid-area: icon;
+    grid-row: 1 / -1;
+    border-right: solid 2px #ddd;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  &2 {
+    grid-area: title;
+    display: flex;
+    align-items: flex-end;
+  }
+  &3 {
+    grid-area: desc;
+    text-align: start;
+    > p {
+      margin: 0.4rem 0;
     }
   }
 }
