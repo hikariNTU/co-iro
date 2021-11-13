@@ -1,0 +1,150 @@
+:root {
+  --orange: #d7923a;
+  --pink: #cb72a2;
+  --gray: #e0e0e0;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  background: #fafafa;
+  font-family: "Helvetica Neue", arial, sans-serif;
+  font-weight: 400;
+  color: #444;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1 {
+  font-size: 3rem;
+  margin: 0.25rem;
+}
+
+h1,
+section,
+p,
+header {
+  margin: 0;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#🌈 {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-top: 100px;
+}
+
+.link {
+  --c: var(--orange);
+  margin: 0 4px;
+  padding-bottom: 2px;
+  color: var(--c);
+  border-bottom: var(--c) solid 1px;
+  text-decoration: none;
+  transition: all 0.1s;
+
+  &:hover {
+    --c: var(--pink);
+  }
+  &:active {
+    --c: red;
+  }
+}
+
+.ed-btn {
+  $primary: #e0e0e0;
+  border: #ddd solid 2px;
+  margin: 3rem;
+  background-color: var(--gray);
+  padding: 3rem;
+  border-radius: 0;
+  font-size: 2rem;
+  font-weight: 100;
+  letter-spacing: 0.2em;
+  cursor: pointer;
+  color: #606066;
+
+  transition: box-shadow 0.1s, background-color 0.1s;
+
+  &:hover {
+    background-color: darken($primary, 5);
+    text-decoration: none;
+  }
+
+  &:active {
+    box-shadow: 0 0 0 2px var(--pink);
+    transition: box-shadow 0.05s;
+    background-color: darken($primary, 10);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--orange);
+
+    &:active {
+      box-shadow: 0 0 0 3px var(--pink);
+    }
+  }
+}
+
+.🎩 {
+  display: grid;
+  grid-template-areas:
+    "icon title"
+    "icon desc";
+  grid-template-columns: 256px 1fr;
+  grid-template-rows: 2fr 110px;
+  gap: 0 32px;
+  border: solid 2px #ddd;
+  padding: 32px;
+  &1 {
+    grid-area: icon;
+    grid-row: 1 / -1;
+    border-right: solid 2px #ddd;
+    -webkit-user-drag: none;
+    user-select: none;
+  }
+  &2 {
+    grid-area: title;
+    display: flex;
+    align-items: flex-end;
+  }
+  &3 {
+    grid-area: desc;
+    text-align: start;
+    > p {
+      margin: 0.4rem 0;
+    }
+  }
+}
+
+.🎨 {
+  --c: #0000;
+  border-bottom: solid 4px var(--c, #0000);
+  font-size: 2rem;
+  text-transform: uppercase;
+
+  &::before {
+    content: ".";
+    margin-right: 0.5rem;
+    display: inline-flex;
+    width: 0.8em;
+    height: 0.8em;
+    border-radius: 3em;
+    color: #0000;
+    letter-spacing: -100px;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--c, #0000);
+    box-shadow: 0 0 0 2px #2226;
+  }
+}
