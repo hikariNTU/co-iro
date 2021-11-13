@@ -1,0 +1,34 @@
+{
+  "name": "co-iro",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Color Picker API showcase",
+  "author": "hikariNTU",
+  "license": "MIT",
+  "keywords": [
+    "preact",
+    "EyeDropper",
+    "vite"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hikariNTU/co-iro"
+  },
+  "bugs": {
+    "url": "https://github.com/hikariNTU/co-iro/issues"
+  },
+  "scripts": {
+    "start": "vite",
+    "dev": "vite",
+    "build": "vite build",
+    "serve": "vite preview"
+  },
+  "dependencies": {
+    "preact": "^10.5.13"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.1.5",
+    "sass": "^1.43.4",
+    "vite": "^2.6.13"
+  }
+}
