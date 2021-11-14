@@ -1,7 +1,9 @@
 :root {
   --orange: #d7923a;
   --pink: #cb72a2;
+  --green: #478;
   --gray: #e0e0e0;
+  --bg: #fafafa;
 }
 
 html,
@@ -10,7 +12,7 @@ body {
   width: 100%;
   padding: 0;
   margin: 0;
-  background: #fafafa;
+  background: var(--bg, #fafafa);
   font-family: "Helvetica Neue", arial, sans-serif;
   font-weight: 400;
   color: #444;
@@ -35,65 +37,121 @@ header {
 }
 
 #🌈 {
-  height: 100%;
+  min-height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding-top: 100px;
+  padding: clamp(30px, 10vh, 100px) 0;
 }
 
 .link {
-  --c: var(--orange);
+  --c: var(--green);
   margin: 0 4px;
   padding-bottom: 2px;
   color: var(--c);
   border-bottom: var(--c) solid 1px;
   text-decoration: none;
+  font-weight: 700;
   transition: all 0.1s;
+  border-radius: 2px;
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px var(--c);
+  }
 
   &:hover {
     --c: var(--pink);
   }
-  &:active {
-    --c: red;
-  }
+}
+
+.ed-btn-wrapper {
+  margin: 3rem;
+  display: flex;
+  flex-direction: column-reverse;
+  align-items: center;
 }
 
 .ed-btn {
   $primary: #e0e0e0;
+  position: relative;
+  width: 120px;
+  height: 160px;
+  display: flex;
+  padding-top: 40px;
+  justify-content: center;
   border: #ddd solid 2px;
-  margin: 3rem;
   background-color: var(--gray);
-  padding: 3rem;
   border-radius: 0;
-  font-size: 2rem;
+  font-size: 24px;
   font-weight: 100;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.1em;
   cursor: pointer;
   color: #606066;
 
-  transition: box-shadow 0.1s, background-color 0.1s;
+  transition: box-shadow 0.1s, background-color 0.1s, clip-path 0.2s,
+    transform 0.2s;
+  clip-path: polygon(
+    50% 0%,
+    80% 5%,
+    100% 30%,
+    90% 55%,
+    65% 70%,
+    50% 95%,
+    35% 70%,
+    10% 55%,
+    0% 30%,
+    20% 5%
+  );
 
   &:hover {
     background-color: darken($primary, 5);
     text-decoration: none;
-  }
-
-  &:active {
-    box-shadow: 0 0 0 2px var(--pink);
-    transition: box-shadow 0.05s;
-    background-color: darken($primary, 10);
+    clip-path: polygon(
+      50% 0%,
+      75% 5%,
+      95% 30%,
+      87.5% 55%,
+      65% 70%,
+      50% 95%,
+      35% 70%,
+      12.5% 55%,
+      5% 30%,
+      25% 5%
+    );
   }
 
   &:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 3px var(--orange);
-
-    &:active {
-      box-shadow: 0 0 0 3px var(--pink);
-    }
+    color: var(--orange);
+    font-weight: 700;
   }
+
+  &:active {
+    box-shadow: 0 0 0 2px var(--pink);
+    background-color: darken($primary, 10);
+    transform: translateY(6px);
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    display: block;
+    width: 24px;
+    height: 24px;
+    background-color: #606066;
+  }
+}
+
+.color-src {
+  display: block;
+  margin-top: -6px;
+  width: 56px;
+  height: 12px;
+  background-color: #aaa;
+  border-radius: 100%;
 }
 
 .🎩 {
@@ -106,31 +164,47 @@ header {
   gap: 0 32px;
   border: solid 2px #ddd;
   padding: 32px;
+  margin: 0 24px;
+  text-align: start;
   &1 {
     grid-area: icon;
     grid-row: 1 / -1;
     border-right: solid 2px #ddd;
     -webkit-user-drag: none;
     user-select: none;
+    @media screen and (max-width: 700px) {
+      border: none;
+      justify-self: center;
+    }
   }
   &2 {
     grid-area: title;
     display: flex;
     align-items: flex-end;
+    @media screen and (max-width: 700px) {
+      justify-self: center;
+    }
   }
   &3 {
     grid-area: desc;
-    text-align: start;
     > p {
       margin: 0.4rem 0;
     }
+  }
+
+  @media screen and (max-width: 700px) {
+    grid-template-columns: 1fr;
+    grid-template-rows: 256px auto auto;
+    grid-template-areas: "icon" " title" " desc";
+    text-align: center;
   }
 }
 
 .🎨 {
   --c: #0000;
   border-bottom: solid 4px var(--c, #0000);
-  font-size: 2rem;
+  font-size: 1.5rem;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
 
   &::before {

@@ -55,9 +55,16 @@ const EyeDropper = () => {
 
   return (
     <>
-      <button class="ed-btn" onClick={getRes}>
-        GET
-      </button>
+      <div class="ed-btn-wrapper">
+        <div class="color-src" aria-hidden></div>
+        <button
+          class="ed-btn"
+          title="Get screen color by EyeDropper API"
+          onClick={getRes}
+        >
+          GET
+        </button>
+      </div>
       <ColorTag result={res} />
     </>
   )
