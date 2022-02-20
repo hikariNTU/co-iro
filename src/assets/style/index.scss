@@ -73,6 +73,14 @@ header {
   align-items: center;
 }
 
+@keyframes rainbow {
+  @for $i from 0 through 20 {
+    #{$i * 5%} {
+      background-color: hsl($i * 18, 80%, 60%);
+    }
+  }
+}
+
 .ed-btn {
   $primary: #e0e0e0;
   position: relative;
@@ -90,36 +98,13 @@ header {
   cursor: pointer;
   color: #606066;
 
-  transition: box-shadow 0.1s, background-color 0.1s, clip-path 0.2s,
-    transform 0.2s;
-  clip-path: polygon(
-    50% 0%,
-    80% 5%,
-    100% 30%,
-    90% 55%,
-    65% 70%,
-    50% 95%,
-    35% 70%,
-    10% 55%,
-    0% 30%,
-    20% 5%
-  );
+  transition: box-shadow 0.1s, background-color 0.1s, clip-path 0.2s, transform 0.2s;
+  clip-path: polygon(50% 0%, 80% 5%, 100% 30%, 90% 55%, 65% 70%, 50% 95%, 35% 70%, 10% 55%, 0% 30%, 20% 5%);
 
   &:hover {
     background-color: darken($primary, 5);
     text-decoration: none;
-    clip-path: polygon(
-      50% 0%,
-      75% 5%,
-      95% 30%,
-      87.5% 55%,
-      65% 70%,
-      50% 95%,
-      35% 70%,
-      12.5% 55%,
-      5% 30%,
-      25% 5%
-    );
+    clip-path: polygon(50% 0%, 75% 5%, 95% 30%, 87.5% 55%, 65% 70%, 50% 95%, 35% 70%, 12.5% 55%, 5% 30%, 25% 5%);
   }
 
   &:focus-visible {
@@ -152,6 +137,10 @@ header {
   height: 12px;
   background-color: #aaa;
   border-radius: 100%;
+  animation-name: rainbow;
+  animation-duration: 10s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
 }
 
 .🎩 {
