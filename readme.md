@@ -14,18 +14,20 @@ This site demo the new eyeDropper API shipped in Chrome 95 and Opera 81.
 
 ## Future feature
 
-- [ ] multiple color format, CMYK, HSL, HSV...
-- [ ] History support
+- [x] multiple color format, CMYK, HSL, HSV...
+- [x] History support
 - [ ] Persistance History using LocalStorage
-- [ ] Better feature detection and logic
+- [x] Better feature detection and logic
 - [ ] sort, group, name those color
 - [ ] keyboard friendly interface
 - [ ] PWA support for offline usage
 
-- [ ] test, prettier sure E2E won't work.
+- [ ] Add some test ?
 
 ## Development
 
 - Vite
-- Preact (JSX with hook)
-- SASS
+- React Typescript
+- Tailwind
+- Radix for UI
+- Jotai for state

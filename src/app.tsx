@@ -4,10 +4,18 @@ import {
   SewingPinIcon,
 } from "@radix-ui/react-icons"
 import { useAtom, useSetAtom } from "jotai"
-import { useEffect } from "react"
+import { forwardRef, useEffect } from "react"
 import { fromHEX } from "wcag-contrast-util"
 import { Logo } from "./logo"
 import { currentColorAtom, historyColorAtom, supportAtom } from "./state"
+import { ColorCard } from "./color-card"
+import {
+  HoverCard,
+  HoverCardArrow,
+  HoverCardContent,
+  HoverCardPortal,
+  HoverCardTrigger,
+} from "@radix-ui/react-hover-card"
 
 const MAX_HISTORY_LENGTH = 50
 const links = Object.freeze({
@@ -22,7 +30,7 @@ async function GetEyeDropper() {
   }
   const eyeDropper = new window.EyeDropper()
   const result = await eyeDropper.open()
-  return result
+  return result.sRGBHex.toUpperCase()
 }
 
 async function copyText(text: string) {
@@ -38,6 +46,21 @@ async function copyText(text: string) {
   return false
 }
 
+function ColorPickerIcon(props: React.SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      height="1em"
+      width="1em"
+      fill="currentColor"
+      viewBox="0 -960 960 960"
+      {...props}
+    >
+      <path d="M120-120v-190l358-358-58-56 58-56 76 76 124-124q5-5 12.5-8t15.5-3q8 0 15 3t13 8l94 94q5 6 8 13t3 15q0 8-3 15.5t-8 12.5L705-555l76 78-57 57-56-58-358 358H120Zm80-80h78l332-334-76-76-334 332v78Zm447-410 96-96-37-37-96 96 37 37Zm0 0-37-37 37 37Z" />
+    </svg>
+  )
+}
+
 function Header() {
   return (
     <header className="h-8 shrink-0 w-full flex items-center justify-start bg-stone-900 border-stone-700 border-b [grid-area:header]">
@@ -46,7 +69,7 @@ function Header() {
         Co-Iro
       </h1>
       <p className="px-2 text-xs text-stone-400 overflow-auto min-w-0 text-nowrap">
-        Retrieve color from your screen pixel with{" "}
+        Retrieve the color from your screen pixel with{" "}
         <a
           className="text-sky-400 underline hover:bg-sky-400/20"
           href={links.mdnLink}
@@ -77,7 +100,7 @@ function SupportBanner() {
       role="alert"
     >
       <p>
-        Your browser doesn't support Eye Dropper API. Using a chromium-based
+        Your browser doesn't support the Eye Dropper API. Use a chromium-based
         browser if you want to use this website.
       </p>
       <a
@@ -91,37 +114,36 @@ function SupportBanner() {
   )
 }
 
-function ColorTag({ result }: { result: string | undefined }) {
-  if (!result) {
-    return null
+const ColorTag = forwardRef<HTMLButtonElement, { color: string }>(
+  function ColorTagCore(props, ref) {
+    const setColor = useSetAtom(currentColorAtom)
+    if (!props.color) {
+      return null
+    }
+
+    return (
+      <button
+        className="flex items-center gap-2 text-neutral-300 hover:bg-stone-800 px-1 rounded"
+        style={{ "--c": props.color }}
+        ref={ref}
+        onClick={() => {
+          setColor(props.color)
+        }}
+        {...props}
+      >
+        <div className="w-4 h-4 rounded-full border border-neutral-700 bg-[--c]"></div>
+        <code className="text-xs">{props.color}</code>
+      </button>
+    )
   }
-
-  const [r, g, b] = fromHEX(result)
-
-  return (
-    <div
-      className="flex items-center gap-2 text-neutral-300"
-      style={{ "--c": result }}
-    >
-      <div className="w-4 h-4 rounded-full border border-neutral-700 bg-[--c]"></div>
-      <div>
-        <code className="text-xs">{result.toUpperCase()}</code>
-        <div className="flex gap-1 text-[10px]">
-          <span className="text-red-700">{Math.round(r * 255)}</span>
-          <span className="text-green-700">{Math.round(g * 255)}</span>
-          <span className="text-blue-700">{Math.round(b * 255)}</span>
-        </div>
-      </div>
-    </div>
-  )
-}
+)
 
 function EyeDropper() {
-  const setColor = useSetAtom(currentColorAtom)
+  const [color, setColor] = useAtom(currentColorAtom)
   const setHistory = useSetAtom(historyColorAtom)
   const getRes = async () => {
     try {
-      const res = (await GetEyeDropper())?.sRGBHex
+      const res = await GetEyeDropper()
       if (res) {
         setColor(res)
         setHistory((h) => {
@@ -142,15 +164,16 @@ function EyeDropper() {
   }
 
   return (
-    <div className="relative flex items-center justify-center bg-zinc-900">
+    <div className="relative flex flex-col gap-2 items-center justify-center bg-zinc-900">
       <SupportBanner />
       <button
-        className="w-20 h-20 rounded-full flex items-center justify-center p-2 flex-col bg-sky-500 text-white hover:bg-sky-600 active:bg-sky-700 font-thin tracking-widest"
+        className="w-20 h-20 rounded-full flex items-center justify-center p-2 flex-col bg-neutral-700 text-white hover:bg-neutral-600 active:bg-neutral-500 text-4xl"
         onClick={getRes}
       >
-        <SewingPinIcon />
-        PICK
+        <ColorPickerIcon />
+        <span className="sr-only">pick color</span>
       </button>
+      <ColorCard color={color} />
     </div>
   )
 }
@@ -169,6 +192,7 @@ function History() {
             No history color available.
             <br />
             Use the color picker from the left panel to start picking color from
+            screen.
           </p>
         )}
         {history.map((data) => {
@@ -177,7 +201,7 @@ function History() {
               key={data.id}
               className="border-b last:border-none py-2 border-stone-800 flex gap-1 group animate-expand origin-top"
             >
-              <ColorTag result={data.color} />
+              <HistoryEntry color={data.color} />
               <button
                 className="opacity-0 ml-auto group-hover:opacity-100 group-focus-within:opacity-100 hover:text-sky-500 p-2 rounded hover:bg-stone-800"
                 onClick={() => {
@@ -191,6 +215,25 @@ function History() {
         })}
       </div>
     </section>
+  )
+}
+
+function HistoryEntry(props: { color: string }) {
+  return (
+    <HoverCard>
+      <HoverCardTrigger asChild>
+        <ColorTag color={props.color} />
+      </HoverCardTrigger>
+      <HoverCardPortal>
+        <HoverCardContent
+          side="left"
+          className="shadow data-[state=open]:transition-all"
+        >
+          <ColorCard color={props.color} />
+          <HoverCardArrow className="fill-neutral-700" />
+        </HoverCardContent>
+      </HoverCardPortal>
+    </HoverCard>
   )
 }
 
