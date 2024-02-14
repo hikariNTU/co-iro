@@ -88,7 +88,7 @@ export const ColorCard = memo(function ColorCard(props: {
         </RingValue>
 
         <div className="flex flex-col gap-2">
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             <RingValue color="#BA1C1B" value={rgb[0]}>
               <span className="text-red-500">{Math.round(rgb[0] * 255)}</span>
             </RingValue>

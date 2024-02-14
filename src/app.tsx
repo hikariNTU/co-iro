@@ -1,11 +1,6 @@
-import {
-  CopyIcon,
-  CounterClockwiseClockIcon,
-  SewingPinIcon,
-} from "@radix-ui/react-icons"
+import { CopyIcon, CounterClockwiseClockIcon } from "@radix-ui/react-icons"
 import { useAtom, useSetAtom } from "jotai"
 import { forwardRef, useEffect } from "react"
-import { fromHEX } from "wcag-contrast-util"
 import { Logo } from "./logo"
 import { currentColorAtom, historyColorAtom, supportAtom } from "./state"
 import { ColorCard } from "./color-card"
@@ -63,12 +58,12 @@ function ColorPickerIcon(props: React.SVGProps<SVGSVGElement>) {
 
 function Header() {
   return (
-    <header className="h-8 shrink-0 w-full flex items-center justify-start bg-stone-900 border-stone-700 border-b [grid-area:header]">
-      <h1 className="font-thin flex items-center gap-1 px-2 ml-1 bg-stone-800 shrink-0 select-none rounded-full ">
-        <Logo className="w-4 h-4" />
+    <header className="h-12 shrink-0 w-full flex items-center justify-start bg-stone-900 border-stone-700 border-b [grid-area:header]">
+      <h1 className="font-thin text-lg flex items-center gap-1 px-2 ml-1 bg-stone-800 shrink-0 select-none rounded-full ">
+        <Logo className="w-6 h-6" />
         Co-Iro
       </h1>
-      <p className="px-2 text-xs text-stone-400 overflow-auto min-w-0 text-nowrap">
+      <p className="px-2 text-sm text-stone-400 overflow-auto min-w-0 text-nowrap">
         Retrieve the color from your screen pixel with{" "}
         <a
           className="text-sky-400 underline hover:bg-sky-400/20"
@@ -183,17 +178,20 @@ function History() {
 
   return (
     <section className="w-[180px] border-l bg-stone-900 border-stone-700 grid grid-rows-[auto,1fr] min-h-0">
-      <h3 className="px-2 py-1 text-sm text-stone-400 flex items-center gap-1 bg-stone-900 border-b border-stone-800">
+      <h3 className="px-2 py-1 text-stone-400 flex items-center gap-1 bg-stone-900 border-b border-stone-800">
         <CounterClockwiseClockIcon /> History
       </h3>
       <div className="flex flex-col overflow-auto px-2">
         {!history.length && (
-          <p className="text-stone-400 text-xs p-2">
-            No history color available.
-            <br />
-            Use the color picker from the left panel to start picking color from
-            screen.
-          </p>
+          <section className="text-stone-400 text-sm p-2">
+            <p className="mb-1">
+              No history color available.
+            </p>
+            <p>
+              Use the color picker from the left panel to start picking color
+              from the screen.
+            </p>
+          </section>
         )}
         {history.map((data) => {
           return (
