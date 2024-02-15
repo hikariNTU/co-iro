@@ -1,44 +1,48 @@
-import { CopyIcon, CounterClockwiseClockIcon } from "@radix-ui/react-icons"
-import { useAtom, useSetAtom } from "jotai"
-import { forwardRef, useEffect } from "react"
-import { Logo } from "./logo"
-import { currentColorAtom, historyColorAtom, supportAtom } from "./state"
-import { ColorCard } from "./color-card"
+import {
+  CopyIcon,
+  CounterClockwiseClockIcon,
+  GitHubLogoIcon,
+} from "@radix-ui/react-icons";
+import { useAtom, useSetAtom } from "jotai";
+import { forwardRef, useEffect } from "react";
+import { Logo } from "./logo";
+import { currentColorAtom, historyColorAtom, supportAtom } from "./state";
+import { ColorCard } from "./color-card";
 import {
   HoverCard,
   HoverCardArrow,
   HoverCardContent,
   HoverCardPortal,
   HoverCardTrigger,
-} from "@radix-ui/react-hover-card"
+} from "@radix-ui/react-hover-card";
 
-const MAX_HISTORY_LENGTH = 50
+const MAX_HISTORY_LENGTH = 50;
 const links = Object.freeze({
   caniuse: "https://caniuse.com/mdn-api_eyedropper",
   mdnLink: "https://developer.mozilla.org/en-US/docs/Web/API/EyeDropper_API",
-})
+});
 
 async function GetEyeDropper() {
   if (typeof window > "u" || !window.EyeDropper) {
-    alert("Oops!! Seems like your not using a chromium browser.")
-    return
+    alert("Oops!! Seems like your not using a chromium browser.");
+    return;
   }
-  const eyeDropper = new window.EyeDropper()
-  const result = await eyeDropper.open()
-  return result.sRGBHex.toUpperCase()
+  const eyeDropper = new window.EyeDropper();
+  const result = await eyeDropper.open();
+  return result.sRGBHex.toUpperCase();
 }
 
 async function copyText(text: string) {
   try {
     if (navigator.clipboard) {
-      await navigator.clipboard.writeText(text)
-      return true
+      await navigator.clipboard.writeText(text);
+      return true;
     }
   } catch (e) {
-    console.warn("Navigator Clipboard unable to proceed:", e)
+    console.warn("Navigator Clipboard unable to proceed:", e);
   }
 
-  return false
+  return false;
 }
 
 function ColorPickerIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -53,45 +57,53 @@ function ColorPickerIcon(props: React.SVGProps<SVGSVGElement>) {
     >
       <path d="M120-120v-190l358-358-58-56 58-56 76 76 124-124q5-5 12.5-8t15.5-3q8 0 15 3t13 8l94 94q5 6 8 13t3 15q0 8-3 15.5t-8 12.5L705-555l76 78-57 57-56-58-358 358H120Zm80-80h78l332-334-76-76-334 332v78Zm447-410 96-96-37-37-96 96 37 37Zm0 0-37-37 37 37Z" />
     </svg>
-  )
+  );
 }
 
 function Header() {
   return (
-    <header className="h-12 shrink-0 w-full flex items-center justify-start bg-stone-900 border-stone-700 border-b [grid-area:header]">
-      <h1 className="font-thin text-lg flex items-center gap-1 px-2 ml-1 bg-stone-800 shrink-0 select-none rounded-full ">
-        <Logo className="w-6 h-6" />
+    <header className="flex h-12 w-full shrink-0 items-center justify-start border-b border-stone-700 bg-stone-900 [grid-area:header]">
+      <h1 className="ml-1 flex shrink-0 select-none items-center gap-1 rounded-full bg-stone-800 px-2 text-lg font-thin ">
+        <Logo className="h-6 w-6" />
         Co-Iro
       </h1>
-      <p className="px-2 text-sm text-stone-400 overflow-auto min-w-0 text-nowrap">
-        Retrieve the color from your screen pixel with{" "}
+      <p className="mx-2 min-w-0 flex-shrink overflow-auto text-nowrap text-xs text-stone-400">
+        Retrieve colors from screens with{" "}
         <a
-          className="text-sky-400 underline hover:bg-sky-400/20"
+          className="rounded px-1 text-sky-400 underline hover:bg-sky-400/20"
           href={links.mdnLink}
         >
           Eye Dropper API
         </a>
       </p>
+      <a
+        className="ml-auto mr-2 rounded p-1 hover:bg-neutral-700 hover:text-neutral-50"
+        href="https://github.com/hikariNTU/co-iro"
+        title="Github link"
+      >
+        <GitHubLogoIcon />
+        <span className="sr-only">Github link</span>
+      </a>
     </header>
-  )
+  );
 }
 
 function SupportBanner() {
-  const [support, setSupport] = useAtom(supportAtom)
+  const [support, setSupport] = useAtom(supportAtom);
 
   useEffect(() => {
     if (typeof window === "undefined" || !("EyeDropper" in window)) {
-      setSupport(false)
+      setSupport(false);
     }
-  }, [])
+  }, []);
 
   if (support) {
-    return null
+    return null;
   }
 
   return (
     <div
-      className="absolute top-0 inset-x-0 p-2 text-sm bg-red-800"
+      className="absolute inset-x-0 top-0 bg-red-800 p-2 text-sm"
       role="alert"
     >
       <p>
@@ -106,41 +118,41 @@ function SupportBanner() {
         See supported browsers
       </a>
     </div>
-  )
+  );
 }
 
 const ColorTag = forwardRef<HTMLButtonElement, { color: string }>(
   function ColorTagCore(props, ref) {
-    const setColor = useSetAtom(currentColorAtom)
+    const setColor = useSetAtom(currentColorAtom);
     if (!props.color) {
-      return null
+      return null;
     }
 
     return (
       <button
-        className="flex items-center gap-2 text-neutral-300 hover:bg-stone-800 px-1 rounded"
+        className="flex items-center gap-2 rounded px-1 text-neutral-300 hover:bg-stone-800"
         style={{ "--c": props.color }}
         ref={ref}
         onClick={() => {
-          setColor(props.color)
+          setColor(props.color);
         }}
         {...props}
       >
-        <div className="w-4 h-4 rounded-full border border-neutral-700 bg-[--c]"></div>
+        <div className="h-4 w-4 rounded-full border border-neutral-700 bg-[--c]"></div>
         <code className="text-xs">{props.color}</code>
       </button>
-    )
-  }
-)
+    );
+  },
+);
 
 function EyeDropper() {
-  const [color, setColor] = useAtom(currentColorAtom)
-  const setHistory = useSetAtom(historyColorAtom)
+  const [color, setColor] = useAtom(currentColorAtom);
+  const setHistory = useSetAtom(historyColorAtom);
   const getRes = async () => {
     try {
-      const res = await GetEyeDropper()
+      const res = await GetEyeDropper();
       if (res) {
-        setColor(res)
+        setColor(res);
         setHistory((h) => {
           const newH = [
             {
@@ -148,21 +160,21 @@ function EyeDropper() {
               color: res,
             },
             ...h,
-          ]
+          ];
           if (newH.length > MAX_HISTORY_LENGTH) {
-            newH.pop()
+            newH.pop();
           }
-          return newH
-        })
+          return newH;
+        });
       }
     } catch {}
-  }
+  };
 
   return (
-    <div className="relative flex flex-col gap-2 items-center justify-center bg-zinc-900">
+    <div className="relative flex flex-col items-center justify-center gap-2 bg-zinc-900">
       <SupportBanner />
       <button
-        className="w-20 h-20 rounded-full flex items-center justify-center p-2 flex-col bg-neutral-700 text-white hover:bg-neutral-600 active:bg-neutral-500 text-4xl"
+        className="flex h-20 w-20 flex-col items-center justify-center rounded-full bg-neutral-700 p-2 text-4xl text-white hover:bg-neutral-600 active:bg-neutral-500"
         onClick={getRes}
       >
         <ColorPickerIcon />
@@ -170,23 +182,21 @@ function EyeDropper() {
       </button>
       <ColorCard color={color} />
     </div>
-  )
+  );
 }
 
 function History() {
-  const [history] = useAtom(historyColorAtom)
+  const [history] = useAtom(historyColorAtom);
 
   return (
-    <section className="w-[180px] border-l bg-stone-900 border-stone-700 grid grid-rows-[auto,1fr] min-h-0">
-      <h3 className="px-2 py-1 text-stone-400 flex items-center gap-1 bg-stone-900 border-b border-stone-800">
+    <section className="grid min-h-0 w-[180px] grid-rows-[auto,1fr] border-l border-stone-700 bg-stone-900">
+      <h3 className="flex items-center gap-1 border-b border-stone-800 bg-stone-900 px-2 py-1 text-stone-400">
         <CounterClockwiseClockIcon /> History
       </h3>
       <div className="flex flex-col overflow-auto px-2">
         {!history.length && (
-          <section className="text-stone-400 text-sm p-2">
-            <p className="mb-1">
-              No history color available.
-            </p>
+          <section className="p-2 text-sm text-stone-400">
+            <p className="mb-1">No history color available.</p>
             <p>
               Use the color picker from the left panel to start picking color
               from the screen.
@@ -197,23 +207,23 @@ function History() {
           return (
             <div
               key={data.id}
-              className="border-b last:border-none py-2 border-stone-800 flex gap-1 group animate-expand origin-top"
+              className="group flex origin-top animate-expand gap-1 border-b border-stone-800 py-2 last:border-none"
             >
               <HistoryEntry color={data.color} />
               <button
-                className="opacity-0 ml-auto group-hover:opacity-100 group-focus-within:opacity-100 hover:text-sky-500 p-2 rounded hover:bg-stone-800"
+                className="ml-auto rounded p-2 opacity-0 hover:bg-stone-800 hover:text-sky-500 group-focus-within:opacity-100 group-hover:opacity-100"
                 onClick={() => {
-                  copyText(data.color)
+                  copyText(data.color);
                 }}
               >
                 <CopyIcon />
               </button>
             </div>
-          )
+          );
         })}
       </div>
     </section>
-  )
+  );
 }
 
 function HistoryEntry(props: { color: string }) {
@@ -232,15 +242,15 @@ function HistoryEntry(props: { color: string }) {
         </HoverCardContent>
       </HoverCardPortal>
     </HoverCard>
-  )
+  );
 }
 
 export function App() {
   return (
-    <div className='h-full w-full grid grid-rows-[auto,1fr] grid-cols-[1fr,auto] [grid-template-areas:"header_header"_"left_right"] min-h-0'>
+    <div className='grid h-full min-h-0 w-full grid-cols-[1fr,auto] grid-rows-[auto,1fr] [grid-template-areas:"header_header"_"left_right"]'>
       <Header />
       <EyeDropper />
       <History />
     </div>
-  )
+  );
 }

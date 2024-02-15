@@ -1,4 +1,4 @@
-import icon from "./assets/icon.svg"
+import icon from "./assets/icon.svg";
 
 export const Logo = ({ className }) => (
   <img
@@ -8,4 +8,4 @@ export const Logo = ({ className }) => (
     src={icon}
     alt="co iro logo"
   />
-)
+);

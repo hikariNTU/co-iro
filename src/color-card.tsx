@@ -1,6 +1,6 @@
-import { DotFilledIcon, DotIcon, SunIcon } from "@radix-ui/react-icons"
-import { memo } from "react"
-import { fromHEX, toRelativeLuminance } from "wcag-contrast-util"
+import { DotFilledIcon, DotIcon, SunIcon } from "@radix-ui/react-icons";
+import { memo } from "react";
+import { fromHEX, toRelativeLuminance } from "wcag-contrast-util";
 
 function RGBToHSL(r: number, g: number, b: number) {
   // Find greatest and smallest channel values
@@ -9,30 +9,30 @@ function RGBToHSL(r: number, g: number, b: number) {
     delta = cmax - cmin,
     h = 0,
     s = 0,
-    l = 0
+    l = 0;
 
   // Calculate hue
   // No difference
-  if (delta === 0) h = 0
+  if (delta === 0) h = 0;
   // Red is max
-  else if (cmax === r) h = ((g - b) / delta) % 6
+  else if (cmax === r) h = ((g - b) / delta) % 6;
   // Green is max
-  else if (cmax === g) h = (b - r) / delta + 2
+  else if (cmax === g) h = (b - r) / delta + 2;
   // Blue is max
-  else h = (r - g) / delta + 4
+  else h = (r - g) / delta + 4;
 
-  h = Math.round(h * 60)
+  h = Math.round(h * 60);
 
   // Make negative hues positive behind 360°
-  if (h < 0) h += 360
+  if (h < 0) h += 360;
 
   // Calculate lightness
-  l = (cmax + cmin) / 2
+  l = (cmax + cmin) / 2;
 
   // Calculate saturation
-  s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1))
+  s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
 
-  return [h, s, l]
+  return [h, s, l];
 }
 
 function RingValue({
@@ -43,15 +43,15 @@ function RingValue({
   trackColor = "#333",
   children,
 }: React.PropsWithChildren<{
-  size?: string
-  value: number
-  color: string
-  bgColor?: string
-  trackColor?: string
+  size?: string;
+  value: number;
+  color: string;
+  bgColor?: string;
+  trackColor?: string;
 }>) {
   return (
     <div
-      className="relative w-[--size] h-[--size] rounded-full [contain:content]"
+      className="relative h-[--size] w-[--size] rounded-full [contain:content]"
       style={{
         "--color": color,
         "--size": size,
@@ -62,25 +62,25 @@ function RingValue({
           "conic-gradient(var(--color), var(--turn), var(--color), var(--turn), var(--track-color))",
       }}
     >
-      <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full w-[80%] h-[80%] bg-[--bg-color] flex flex-col items-center justify-center gap-1">
+      <div className="absolute left-1/2 top-1/2 flex h-[80%] w-[80%] -translate-x-1/2 -translate-y-1/2 flex-col items-center justify-center gap-1 rounded-full bg-[--bg-color]">
         {children}
       </div>
     </div>
-  )
+  );
 }
 
 export const ColorCard = memo(function ColorCard(props: {
-  color: string | undefined
+  color: string | undefined;
 }) {
-  const rgb = fromHEX(props.color || "#000")
+  const rgb = fromHEX(props.color || "#000");
   const hsl = RGBToHSL(
     // @ts-expect-error
-    ...rgb
-  )
-  const luminance = toRelativeLuminance(...rgb)
+    ...rgb,
+  );
+  const luminance = toRelativeLuminance(...rgb);
 
   return (
-    <div className="relative bg-neutral-900 p-4 rounded-xl border border-neutral-700 text-xs">
+    <div className="relative rounded-xl border border-neutral-700 bg-neutral-900 p-4 text-xs">
       <div className="flex gap-4">
         <RingValue size="80px" color="white" value={luminance}>
           <SunIcon />
@@ -123,9 +123,9 @@ export const ColorCard = memo(function ColorCard(props: {
       </div>
 
       <div
-        className="absolute left-2 top-2 w-4 h-4 rounded-full border border-neutral-700 bg-[--c]"
+        className="absolute left-2 top-2 h-4 w-4 rounded-full border border-neutral-700 bg-[--c]"
         style={{ "--c": props.color || "transparent" }}
       ></div>
     </div>
-  )
-})
+  );
+});
