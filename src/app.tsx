@@ -171,10 +171,17 @@ function EyeDropper() {
   };
 
   return (
-    <div className="relative flex flex-col items-center justify-center gap-2 bg-zinc-900">
+    <div
+      className="relative flex flex-col items-center justify-center gap-2 bg-zinc-900"
+      style={{
+        "--color": color || "#000",
+        background:
+          "radial-gradient(circle, var(--color) 0%, rgba(24 24 27) 70%, rgba(0 0 0) 100%)",
+      }}
+    >
       <SupportBanner />
       <button
-        className="flex h-20 w-20 flex-col items-center justify-center rounded-full bg-neutral-700 p-2 text-4xl text-white hover:bg-neutral-600 active:bg-neutral-500"
+        className="flex h-20 w-20 flex-col items-center justify-center rounded-full bg-neutral-700/80 p-2 text-4xl text-white hover:bg-neutral-800/90 active:bg-neutral-950"
         onClick={getRes}
       >
         <ColorPickerIcon />
