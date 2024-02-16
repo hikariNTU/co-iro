@@ -21,7 +21,10 @@ export async function copyText(text: string) {
   return false;
 }
 
-export function RGBToHSL(r: number, g: number, b: number) {
+export function RGBToHSL(rgb: number[]) {
+  const r = rgb[0],
+    g = rgb[1],
+    b = rgb[2];
   // Find greatest and smallest channel values
   let cMin = Math.min(r, g, b),
     cMax = Math.max(r, g, b),
@@ -64,4 +67,40 @@ export function getRandomColor() {
   return (
     "#" + colors.map((v) => Math.round(v).toString(16).toUpperCase()).join("")
   );
+}
+
+export function RGBtoLab(rgb: number[]): [number, number, number] {
+  let r = rgb[0],
+    g = rgb[1],
+    b = rgb[2],
+    x: number,
+    y: number,
+    z: number;
+
+  r = r > 0.04045 ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+  g = g > 0.04045 ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+  b = b > 0.04045 ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+
+  x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+  y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.0;
+  z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+
+  x = x > 0.008856 ? Math.pow(x, 1 / 3) : 7.787 * x + 16 / 116;
+  y = y > 0.008856 ? Math.pow(y, 1 / 3) : 7.787 * y + 16 / 116;
+  z = z > 0.008856 ? Math.pow(z, 1 / 3) : 7.787 * z + 16 / 116;
+
+  return [116 * y - 16, 500 * (x - y), 200 * (y - z)];
+}
+
+export function RGBtoCMYK(rgb: number[]): [number, number, number, number] {
+  const r = rgb[0];
+  const g = rgb[1];
+  const b = rgb[2];
+
+  const k = Math.min(1 - r, 1 - g, 1 - b);
+  const c = (1 - r - k) / (1 - k) || 0;
+  const m = (1 - g - k) / (1 - k) || 0;
+  const y = (1 - b - k) / (1 - k) || 0;
+
+  return [c, m, y, k];
 }

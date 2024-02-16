@@ -16,7 +16,7 @@ import clsx from "clsx";
 import { useAtom, useSetAtom } from "jotai";
 import { forwardRef, useEffect } from "react";
 import { ColorCard } from "./color-card";
-import { Logo } from "./logo";
+import { Logo, StrokeDraw } from "./logo";
 import { currentColorAtom, historyColorAtom, supportAtom } from "./state";
 import { copyText, getEyeDropper } from "./utils";
 
@@ -44,7 +44,7 @@ function ColorPickerIcon(props: React.SVGProps<SVGSVGElement>) {
 function Header() {
   return (
     <header className="flex h-12 w-full shrink-0 items-center justify-start px-2 [grid-area:header]">
-      <h1 className="ml-1 flex shrink-0 select-none items-center gap-1 rounded-full bg-stone-800 px-2 text-lg font-thin ">
+      <h1 className="relative ml-1 flex shrink-0 select-none items-center gap-1 rounded-full bg-stone-800 px-2 text-lg font-thin">
         <Logo className="h-6 w-6" />
         Co-Iro
       </h1>

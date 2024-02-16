@@ -1,7 +1,8 @@
 import { CopyIcon, SunIcon } from "@radix-ui/react-icons";
 import { memo } from "react";
 import { fromHEX, toRelativeLuminance } from "wcag-contrast-util";
-import { RGBToHSL, copyText } from "./utils";
+import { RGBToHSL, RGBtoCMYK, RGBtoLab, copyText } from "./utils";
+import { StrokeDraw } from "./logo";
 
 function RingValue({
   size = "48px",
@@ -39,28 +40,28 @@ function RingValue({
 
 export const ColorCard = memo(function ColorCard(props: { color: string }) {
   const rgb = fromHEX(props.color);
-  const hsl = RGBToHSL(
-    // @ts-expect-error
-    ...rgb,
-  );
+  const hsl = RGBToHSL(rgb);
+  const lab = RGBtoLab(rgb);
+  const cmyk = RGBtoCMYK(rgb);
   const luminance = toRelativeLuminance(...rgb);
+  const isDark = luminance < 0.25;
 
   return (
     <div className="relative flex flex-col items-center justify-center rounded-xl bg-neutral-900/80 p-4 py-3 backdrop-blur">
       <div
-        className="font-love mb-3 flex justify-center rounded-full px-4 py-1 text-4xl"
-        style={
-          luminance < 0.25
-            ? {
-                color: "white",
-                backgroundColor: props.color,
-                border: "solid 1px #666",
-              }
-            : {
-                color: props.color,
-              }
-        }
+        className="my-4 flex justify-center rounded-full px-4 py-1 font-love text-4xl"
+        style={{
+          color: isDark ? "white" : props.color,
+        }}
       >
+        {isDark && (
+          <StrokeDraw
+            style={{ color: props.color }}
+            width={180}
+            className="pointer-events-none absolute top-1.5 -z-10"
+            aria-hidden
+          />
+        )}
         {props.color}
       </div>
 
@@ -85,21 +86,28 @@ export const ColorCard = memo(function ColorCard(props: { color: string }) {
 
           <ul className="text-neutral-300">
             <li className="flex justify-between">
-              HEX:
-              <code>{props.color}</code>
-            </li>
-            <li className="flex justify-between">
-              RGB:
+              sRGB
               <code>
-                {rgb[0] * 255}, {rgb[1] * 255}, {rgb[2] * 255}
+                {rgb[0] * 255} {rgb[1] * 255} {rgb[2] * 255}
               </code>
             </li>
             <li className="flex justify-between">
-              HSL:
+              HSL
               <code>
-                {hsl[0]}, {(hsl[1] * 100).toFixed(0)},{" "}
-                {(hsl[2] * 100).toFixed(0)}
+                {hsl[0]}
+                <span className="select-none">°</span>{" "}
+                {(hsl[1] * 100).toFixed(0)}% {(hsl[2] * 100).toFixed(0)}%
               </code>
+            </li>
+            <li className="flex justify-between">
+              L*a*b
+              <code>
+                {lab[0].toFixed(1)} {lab[1].toFixed(1)} {lab[2].toFixed(1)}
+              </code>
+            </li>
+            <li className="flex justify-between">
+              CMYK
+              <code>{cmyk.map((v) => (v * 100).toFixed(0)).join(" ")}</code>
             </li>
           </ul>
         </div>
