@@ -1,49 +1,30 @@
 import {
-  CopyIcon,
-  CounterClockwiseClockIcon,
-  GitHubLogoIcon,
-} from "@radix-ui/react-icons";
-import { useAtom, useSetAtom } from "jotai";
-import { forwardRef, useEffect } from "react";
-import { Logo } from "./logo";
-import { currentColorAtom, historyColorAtom, supportAtom } from "./state";
-import { ColorCard } from "./color-card";
-import {
   HoverCard,
   HoverCardArrow,
   HoverCardContent,
   HoverCardPortal,
   HoverCardTrigger,
 } from "@radix-ui/react-hover-card";
+import {
+  CopyIcon,
+  CounterClockwiseClockIcon,
+  Cross1Icon,
+  GitHubLogoIcon,
+  TrashIcon,
+} from "@radix-ui/react-icons";
+import clsx from "clsx";
+import { useAtom, useSetAtom } from "jotai";
+import { forwardRef, useEffect } from "react";
+import { ColorCard } from "./color-card";
+import { Logo } from "./logo";
+import { currentColorAtom, historyColorAtom, supportAtom } from "./state";
+import { copyText, getEyeDropper } from "./utils";
 
 const MAX_HISTORY_LENGTH = 50;
 const links = Object.freeze({
   caniuse: "https://caniuse.com/mdn-api_eyedropper",
   mdnLink: "https://developer.mozilla.org/en-US/docs/Web/API/EyeDropper_API",
 });
-
-async function GetEyeDropper() {
-  if (typeof window > "u" || !window.EyeDropper) {
-    alert("Oops!! Seems like your not using a chromium browser.");
-    return;
-  }
-  const eyeDropper = new window.EyeDropper();
-  const result = await eyeDropper.open();
-  return result.sRGBHex.toUpperCase();
-}
-
-async function copyText(text: string) {
-  try {
-    if (navigator.clipboard) {
-      await navigator.clipboard.writeText(text);
-      return true;
-    }
-  } catch (e) {
-    console.warn("Navigator Clipboard unable to proceed:", e);
-  }
-
-  return false;
-}
 
 function ColorPickerIcon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -62,7 +43,7 @@ function ColorPickerIcon(props: React.SVGProps<SVGSVGElement>) {
 
 function Header() {
   return (
-    <header className="flex h-12 w-full shrink-0 items-center justify-start border-b border-stone-700 bg-stone-900 [grid-area:header]">
+    <header className="flex h-12 w-full shrink-0 items-center justify-start px-2 [grid-area:header]">
       <h1 className="ml-1 flex shrink-0 select-none items-center gap-1 rounded-full bg-stone-800 px-2 text-lg font-thin ">
         <Logo className="h-6 w-6" />
         Co-Iro
@@ -77,7 +58,7 @@ function Header() {
         </a>
       </p>
       <a
-        className="ml-auto mr-2 rounded p-1 hover:bg-neutral-700 hover:text-neutral-50"
+        className="ml-auto rounded p-1 hover:bg-neutral-700 hover:text-neutral-50"
         href="https://github.com/hikariNTU/co-iro"
         title="Github link"
       >
@@ -150,7 +131,7 @@ function EyeDropper() {
   const setHistory = useSetAtom(historyColorAtom);
   const getRes = async () => {
     try {
-      const res = await GetEyeDropper();
+      const res = await getEyeDropper();
       if (res) {
         setColor(res);
         setHistory((h) => {
@@ -171,14 +152,7 @@ function EyeDropper() {
   };
 
   return (
-    <div
-      className="relative flex flex-col items-center justify-center gap-2 bg-zinc-900"
-      style={{
-        "--color": color || "#000",
-        background:
-          "radial-gradient(circle, var(--color) 0%, rgba(24 24 27) 70%, rgba(0 0 0) 100%)",
-      }}
-    >
+    <div className="relative flex flex-col items-center justify-center gap-2">
       <SupportBanner />
       <button
         className="flex h-20 w-20 flex-col items-center justify-center rounded-full bg-neutral-700/80 p-2 text-4xl text-white hover:bg-neutral-800/90 active:bg-neutral-950"
@@ -193,41 +167,65 @@ function EyeDropper() {
 }
 
 function History() {
-  const [history] = useAtom(historyColorAtom);
+  const [history, setHistory] = useAtom(historyColorAtom);
+  function removeHistory(id: string) {
+    setHistory((h) => h.filter((v) => v.id !== id));
+  }
 
   return (
-    <section className="grid min-h-0 w-[180px] grid-rows-[auto,1fr] border-l border-stone-700 bg-stone-900">
-      <h3 className="flex items-center gap-1 border-b border-stone-800 bg-stone-900 px-2 py-1 text-stone-400">
-        <CounterClockwiseClockIcon /> History
-      </h3>
-      <div className="flex flex-col overflow-auto px-2">
-        {!history.length && (
-          <section className="p-2 text-sm text-stone-400">
-            <p className="mb-1">No history color available.</p>
-            <p>
-              Use the color picker from the left panel to start picking color
-              from the screen.
-            </p>
-          </section>
-        )}
-        {history.map((data) => {
-          return (
-            <div
-              key={data.id}
-              className="group flex origin-top animate-expand gap-1 border-b border-stone-800 py-2 last:border-none"
-            >
-              <HistoryEntry color={data.color} />
-              <button
-                className="ml-auto rounded p-2 opacity-0 hover:bg-stone-800 hover:text-sky-500 group-focus-within:opacity-100 group-hover:opacity-100"
-                onClick={() => {
-                  copyText(data.color);
-                }}
+    <section
+      className={clsx("min-h-0 p-2 transition-[width]", {
+        "w-[180px]": history.length,
+        "w-0 overflow-hidden": !history.length,
+      })}
+    >
+      <div className="grid max-h-full grid-rows-[auto,1fr] rounded-xl bg-stone-800/50 backdrop-blur">
+        <h3 className="flex items-center gap-1 border-b border-stone-800 px-3 py-2 text-xs text-stone-400">
+          <CounterClockwiseClockIcon /> History
+          <button
+            onClick={() => setHistory([])}
+            className="ml-auto rounded p-1 hover:bg-neutral-700 hover:text-white"
+          >
+            <Cross1Icon />
+          </button>
+        </h3>
+        <div className="flex flex-col overflow-auto px-2">
+          {!history.length && (
+            <section className="p-2 text-sm text-stone-400">
+              <p className="mb-1">No history color available.</p>
+              <p>
+                Use the color picker from the left panel to start picking color
+                from the screen.
+              </p>
+            </section>
+          )}
+          {history.map((data) => {
+            return (
+              <div
+                key={data.id}
+                className="group flex origin-top animate-expand border-b border-stone-500/30 py-2 text-neutral-400 last:border-none"
               >
-                <CopyIcon />
-              </button>
-            </div>
-          );
-        })}
+                <HistoryEntry color={data.color} />
+                <button
+                  className="ml-auto rounded p-2 opacity-0 hover:bg-stone-800 hover:text-neutral-50 group-focus-within:opacity-100 group-hover:opacity-100"
+                  onClick={() => {
+                    copyText(data.color);
+                  }}
+                >
+                  <CopyIcon />
+                </button>
+                <button
+                  className="rounded p-2 opacity-0 hover:bg-stone-800 hover:text-red-400 group-focus-within:opacity-100 group-hover:opacity-100"
+                  onClick={() => {
+                    removeHistory(data.id);
+                  }}
+                >
+                  <TrashIcon />
+                </button>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );
@@ -242,7 +240,7 @@ function HistoryEntry(props: { color: string }) {
       <HoverCardPortal>
         <HoverCardContent
           side="left"
-          className="shadow data-[state=open]:transition-all"
+          className="rounded-xl border border-neutral-700 data-[state=open]:transition-all"
         >
           <ColorCard color={props.color} />
           <HoverCardArrow className="fill-neutral-700" />
@@ -252,9 +250,25 @@ function HistoryEntry(props: { color: string }) {
   );
 }
 
+function BG() {
+  const [color] = useAtom(currentColorAtom);
+  return (
+    <div
+      aria-hidden
+      className="fixed inset-0 -z-10"
+      style={{
+        "--color": color || "#000",
+        background:
+          "radial-gradient(circle, var(--color) 0%, rgba(24 24 27) 70%, rgba(0 0 0) 100%)",
+      }}
+    ></div>
+  );
+}
+
 export function App() {
   return (
-    <div className='grid h-full min-h-0 w-full grid-cols-[1fr,auto] grid-rows-[auto,1fr] [grid-template-areas:"header_header"_"left_right"]'>
+    <div className='mx-auto grid h-full min-h-0 w-full max-w-screen-xl grid-cols-[1fr,auto] grid-rows-[auto,1fr] [grid-template-areas:"header_header"_"left_right"]'>
+      <BG />
       <Header />
       <EyeDropper />
       <History />

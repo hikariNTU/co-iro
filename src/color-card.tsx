@@ -1,45 +1,13 @@
-import { DotFilledIcon, DotIcon, SunIcon } from "@radix-ui/react-icons";
+import { CopyIcon, SunIcon } from "@radix-ui/react-icons";
 import { memo } from "react";
 import { fromHEX, toRelativeLuminance } from "wcag-contrast-util";
-
-function RGBToHSL(r: number, g: number, b: number) {
-  // Find greatest and smallest channel values
-  let cmin = Math.min(r, g, b),
-    cmax = Math.max(r, g, b),
-    delta = cmax - cmin,
-    h = 0,
-    s = 0,
-    l = 0;
-
-  // Calculate hue
-  // No difference
-  if (delta === 0) h = 0;
-  // Red is max
-  else if (cmax === r) h = ((g - b) / delta) % 6;
-  // Green is max
-  else if (cmax === g) h = (b - r) / delta + 2;
-  // Blue is max
-  else h = (r - g) / delta + 4;
-
-  h = Math.round(h * 60);
-
-  // Make negative hues positive behind 360°
-  if (h < 0) h += 360;
-
-  // Calculate lightness
-  l = (cmax + cmin) / 2;
-
-  // Calculate saturation
-  s = delta === 0 ? 0 : delta / (1 - Math.abs(2 * l - 1));
-
-  return [h, s, l];
-}
+import { RGBToHSL, copyText } from "./utils";
 
 function RingValue({
   size = "48px",
   value = 0.23,
   color = "white",
-  bgColor = "#171717",
+  bgColor = "#1a1a1a",
   trackColor = "#333",
   children,
 }: React.PropsWithChildren<{
@@ -69,10 +37,8 @@ function RingValue({
   );
 }
 
-export const ColorCard = memo(function ColorCard(props: {
-  color: string | undefined;
-}) {
-  const rgb = fromHEX(props.color || "#000");
+export const ColorCard = memo(function ColorCard(props: { color: string }) {
+  const rgb = fromHEX(props.color);
   const hsl = RGBToHSL(
     // @ts-expect-error
     ...rgb,
@@ -80,8 +46,25 @@ export const ColorCard = memo(function ColorCard(props: {
   const luminance = toRelativeLuminance(...rgb);
 
   return (
-    <div className="relative rounded-xl border border-neutral-700 bg-neutral-900 p-4 text-xs">
-      <div className="flex gap-4">
+    <div className="relative flex flex-col items-center justify-center rounded-xl bg-neutral-900/80 p-4 py-3 backdrop-blur">
+      <div
+        className="font-love mb-3 flex justify-center rounded-full px-4 py-1 text-4xl"
+        style={
+          luminance < 0.25
+            ? {
+                color: "white",
+                backgroundColor: props.color,
+                border: "solid 1px #666",
+              }
+            : {
+                color: props.color,
+              }
+        }
+      >
+        {props.color}
+      </div>
+
+      <div className="flex gap-4 text-xs">
         <RingValue size="80px" color="white" value={luminance}>
           <SunIcon />
           {luminance.toFixed(3)}
@@ -122,10 +105,14 @@ export const ColorCard = memo(function ColorCard(props: {
         </div>
       </div>
 
-      <div
-        className="absolute left-2 top-2 h-4 w-4 rounded-full border border-neutral-700 bg-[--c]"
-        style={{ "--c": props.color || "transparent" }}
-      ></div>
+      <button
+        className="absolute right-2 top-2 rounded p-2 text-neutral-400 hover:bg-neutral-700 hover:text-neutral-50"
+        onClick={() => {
+          copyText(props.color);
+        }}
+      >
+        <CopyIcon />
+      </button>
     </div>
   );
 });
